@@ -2,11 +2,10 @@ import sys
 import subprocess
 
 # implement pip as a subprocess to install packages:
-for package in ['ed25519', 'ocsp-checker']:
+for package in ['ed25519']:
   subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
   
 import ed25519
-from ocspchecker import ocspchecker
 
 def sign_message(msg: bytes):
   """ 
@@ -29,10 +28,3 @@ def verify_signature(msg: bytes, signature: bytes, pubkey) -> bool:
     print(True)
   except:
     print(False)
-
-def ocsp_check(server: str) -> str:
-  """
-  Takes a website and checks their certificate status using OCSP.
-  """
-  
-  return ocspchecker.get_ocsp_status(server)[-1]
