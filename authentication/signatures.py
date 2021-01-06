@@ -2,8 +2,7 @@ import sys
 import subprocess
 
 # implement pip as a subprocess to install packages:
-for package in ['ed25519']:
-  subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
+subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'ed25519'])
   
 import ed25519
 
