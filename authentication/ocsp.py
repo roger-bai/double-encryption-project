@@ -1,3 +1,15 @@
+# better ocsp package
+subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'ocsp-checker'])
+
+from ocspchecker import ocspchecker
+
+def ocsp_check(hostname: str, port=443) -> str:
+    """
+    Returns the OCSP status of the hostname.
+    """
+    return ocspchecker.get_ocsp_status(hostname, port)[-1]
+
+# alternate ocsp checker. sometimes returns unauthorized/malformed response error messages.
 # credit to Stephan Schlecht on stackexchange
 import base64
 import ssl
