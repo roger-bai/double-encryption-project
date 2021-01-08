@@ -15,6 +15,8 @@ def encrypt(key_name: str, plaintext: str, url: str = vault_url) -> str:
     """
     Encrypts plaintext given in base64 encoding using key corresponding to 
     key_name and returns the ciphertext.
+
+    Output ciphertext formatted as vault:version:ciphertext
     """
     client = hvac.Client(url=url)
 
