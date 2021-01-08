@@ -13,8 +13,8 @@ def create_key(key_name: str, url: str = vault_url):
 
 def encrypt(key_name: str, plaintext: str, url: str = vault_url) -> str:
     """
-    Encrypts plaintext given in base64 encoding using key corresponding to key_name
-    and returns the ciphertext.
+    Encrypts plaintext given in base64 encoding using key corresponding to 
+    key_name and returns the ciphertext.
     """
     client = hvac.Client(url=url)
 
@@ -25,3 +25,18 @@ def encrypt(key_name: str, plaintext: str, url: str = vault_url) -> str:
     ciphertext = encrypt_data_response['data']['ciphertext']
     
     return ciphertext
+
+def decrypt(key_name: str, ciphertext:str, url: str = vault_url) -> str:
+    """
+    Decrypts the ciphertext using key corresponding to key_name and returns the
+    base64-encoded plaintext.
+    """
+    client = hvac.Client(url=url)
+
+    decrypt_data_response = client.secrets.transit.decrypt_data(
+        name = key_name,
+        ciphertext = ciphertext
+    )
+    plaintext = decrypt_data_response['data']['plaintext']
+
+    return plaintext
