@@ -1,7 +1,17 @@
 import hvac
+import base64
 
 # Vault server url
 vault_url = 'http://127.0.0.1:8200'
+
+def encode_base64(input_string: str) -> str:
+    """
+    Takes a string and returns its base64 encoding as a string.
+    """
+    input_bytes = input_string.encode('utf8')
+    encoded_bytes = base64.urlsafe_b64encode(input_bytes)
+
+    return encoded_bytes.decode('ascii')
 
 def create_key(key_name: str, url: str = vault_url):
     """
