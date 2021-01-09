@@ -13,6 +13,15 @@ def encode_base64(input_string: str) -> str:
 
     return encoded_bytes.decode('ascii')
 
+def decode_base64(input_string: str) -> str:
+    """
+    Takes a base64-encoded string and returns the decoded string.
+    """
+    input_bytes = input_string.encode('utf8')
+    decoded_bytes = base64.urlsafe_b64decode(input_bytes)
+
+    return decoded_bytes.decode('ascii')
+
 def create_key(key_name: str, url: str = vault_url):
     """
     Creates a key of name key_name.
