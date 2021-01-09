@@ -24,6 +24,14 @@ URL of the Vault server.
 Defaulted at `http://127.0.0.1:8200`
 
 ## Functions
+`encode_base64(input_string: str) -> str`
+
+Takes a string and returns its URL-safe base64 encoding as a string.
+
+`decode_base64(input_string: str) -> str`
+
+Takes a URL-safe base64-encoded string and returns its decoding as an ASCII string.
+
 `create_key(key_name: str, url: str = vault_url)`
 
 Creates a key of name `key_name` for Vault server at `url` (default value at `vault_url`).
