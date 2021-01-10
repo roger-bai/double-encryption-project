@@ -1,3 +1,6 @@
+import sys
+import subprocess
+
 # better ocsp package
 subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'ocsp-checker'])
 
