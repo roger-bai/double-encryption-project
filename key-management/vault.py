@@ -47,7 +47,7 @@ def encrypt(key_name: str, plaintext: str, url: str = vault_url) -> bytes:
     
     return ciphertext.encode('utf8')
 
-def decrypt(key_name: str, ciphertext:str, url: str = vault_url) -> str:
+def decrypt(key_name: str, ciphertext:bytes, url: str = vault_url) -> str:
     """
     Decrypts the ciphertext using key corresponding to key_name and returns the
     base64-encoded plaintext.
@@ -56,7 +56,7 @@ def decrypt(key_name: str, ciphertext:str, url: str = vault_url) -> str:
 
     decrypt_data_response = client.secrets.transit.decrypt_data(
         name = key_name,
-        ciphertext = ciphertext
+        ciphertext = ciphertext.decode('ascii')
     )
     plaintext = decrypt_data_response['data']['plaintext']
 
