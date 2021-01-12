@@ -49,8 +49,8 @@ def encrypt(key_name: str, plaintext: str, url: str = vault_url) -> bytes:
 
 def decrypt(key_name: str, ciphertext:bytes, url: str = vault_url) -> str:
     """
-    Decrypts the ciphertext using key corresponding to key_name and returns the
-    base64-encoded plaintext.
+    Decrypts the ciphertext given as bytes using key corresponding to key_name 
+    and returns the base64-encoded plaintext.
     """
     client = hvac.Client(url=url)
 

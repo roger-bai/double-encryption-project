@@ -37,11 +37,11 @@ Takes a URL-safe base64-encoded string and returns its decoding as an ASCII stri
 Creates a key of name `key_name` for Vault server at `url` (default value at `vault_url`).
 Default mode is `aes256-gcm96`.
 
-`encrypt(key_name: str, plaintext: str, url: str = vault_url) -> str`
+`encrypt(key_name: str, plaintext: str, url: str = vault_url) -> bytes`
 
-Encrypts uses the key corresponding to `key_name` to encrypt the plaintext given in base64 encoding and returns the ciphertext.
+Encrypts uses the key corresponding to `key_name` to encrypt the plaintext given in base64 encoding and returns the ciphertext as bytes.
 The output ciphertext is of the form vault:[version]:[ciphertext].
 
-`decrypt(key_name: str, ciphertext:str, url: str = vault_url) -> str`
+`decrypt(key_name: str, ciphertext:bytes, url: str = vault_url) -> str`
 
-Decrypts the ciphertext using key corresponding to `key_name` and returns the base64-encoded plaintext.
+Decrypts the ciphertext (given as bytes) using key corresponding to `key_name` and returns the base64-encoded plaintext.
