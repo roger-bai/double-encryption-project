@@ -30,7 +30,7 @@ def create_key(key_name: str, url: str = vault_url):
     
     client.secrets.transit.create_key(name=key_name)
 
-def encrypt(key_name: str, plaintext: str, url: str = vault_url) -> str:
+def encrypt(key_name: str, plaintext: str, url: str = vault_url) -> bytes:
     """
     Encrypts plaintext given in base64 encoding using key corresponding to 
     key_name and returns the ciphertext.
@@ -45,7 +45,7 @@ def encrypt(key_name: str, plaintext: str, url: str = vault_url) -> str:
     )
     ciphertext = encrypt_data_response['data']['ciphertext']
     
-    return ciphertext
+    return ciphertext.encode('utf8')
 
 def decrypt(key_name: str, ciphertext:str, url: str = vault_url) -> str:
     """
