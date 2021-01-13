@@ -32,11 +32,11 @@ class AESCipher:
 
 def encrypt_CSV(file_name, keys, columns_to_encrypt = None):
     """
-    encrypts specified columns of CSV file with corresponding keys
-
-    - file_name:          name of CSV file to encrypt
-    - keys:               list of keys (strings)
-    - columns_to_encrypt: unspecified ('None'), or array with indices of columns to encrypt
+    encrypts specified columns of CSV file with corresponding keys using AES-256 in OFB mode
+    parameters:
+        file_name:          name of CSV file to encrypt
+        keys:               list of keys (strings)
+        columns_to_encrypt: unspecified ('None'), or array with indices of columns to encrypt
     """
     file = open(file_name, 'r')
     reader_, reader = itertools.tee(csv.reader(file, delimiter=','))
@@ -77,11 +77,11 @@ def encrypt_CSV(file_name, keys, columns_to_encrypt = None):
 def decrypt_CSV(file_name, keys, columns_to_decrypt = None):
     """
     decrypts CSV file encrypted with encrypt_CSV
-
-    - file_name:          name of CSV file to decrypt
-    - keys:               array of strings, each a key for the corresponding entry in columns_to_decrypt
-                          (i.e. keys[0] corresponds to columns_to_encrypt[0], and so on)
-    - columns_to_decrypt: unspecified ('None'), or array with indices of columns to decrypt
+    parameters:
+        file_name:          name of CSV file to decrypt
+        keys:               array of strings, each a key for the corresponding entry in columns_to_decrypt
+                            (i.e. keys[0] corresponds to columns_to_encrypt[0], and so on)
+        columns_to_decrypt: unspecified ('None'), or array with indices of columns to decrypt
     """
     file = open(file_name, 'r')
     reader_, reader = itertools.tee(csv.reader(file))
