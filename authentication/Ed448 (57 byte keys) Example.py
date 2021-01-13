@@ -1,4 +1,3 @@
-pip install ecpy
 from ecpy.curves import Curve
 from ecpy.keys import ECPrivateKey
 from ecpy.eddsa import EDDSA
