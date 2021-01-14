@@ -30,12 +30,11 @@ class AESCipher:
         return self.unpad(cipher.decrypt(cipher_text[16:])).decode()
 
 
-def encrypt_CSV(file_name, key, columns_to_encrypt = None):
+def encrypt_CSV(file_name, columns_to_encrypt = None):
     """
     encrypts specified columns of CSV file with corresponding keys using AES-256 in GCM mode
     parameters:
         file_name:          name of CSV file to encrypt
-        key:                16-byte secret key
         columns_to_encrypt: unspecified ('None'), or array with indices of columns to encrypt
     """
     file = open(file_name, 'r')
@@ -69,34 +68,22 @@ def encrypt_CSV(file_name, key, columns_to_encrypt = None):
         writer = csv.DictWriter(enc_file, fieldnames = header)
         writer.writeheader()
         for row in encrypted_data:
-            writer.writerow(row)
-            
-    encr_keys = {}
-    for column in columns_to_encrypt:
-        iv = Random().read(16)
-        cipher = AES.new(key, AES.MODE_GCM, iv)
-        encr_keys[column] = b64encode(iv + cipher.encrypt(column_keys[column])).decode()
-    return encr_keys
+            writer.writerow(row)  
+    return column_keys
 
 
-def decrypt_CSV(file_name, key, encr_keys):
+def decrypt_CSV(file_name, column_keys):
     """
     decrypts CSV file encrypted with encrypt_CSV
     parameters:
-        file_name: name of CSV file to decrypt
-        key:       16-byte secret key
-        encr_keys: dictionary of column numbers and their corresponding (encrypted) keys
+        file_name:   name of CSV file to decrypt
+        key:         16-byte secret key
+        column_keys: dictionary of column numbers and their corresponding keys
     """
     file = open(file_name, 'r')
     reader_, reader = itertools.tee(csv.reader(file))
     columns = len(next(reader_))
     del reader_
-        
-    column_keys = {}
-    for column in encr_keys:
-        encr_key = b64decode(encr_keys[column].encode())
-        cipher   = AES.new(key, AES.MODE_GCM, encr_key[:16])
-        column_keys[column] = cipher.decrypt(encr_key[16:])
         
     header = next(reader) 
     decrypted_data = []
