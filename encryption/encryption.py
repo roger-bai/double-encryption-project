@@ -1,7 +1,7 @@
 from Crypto.Cipher import AES
 from Crypto.Random import new as Random
 from hashlib import sha256
-from base64 import b64encode,b64decode
+from base64 import b64encode, b64decode
 import scrypt
 import csv
 import itertools
@@ -13,29 +13,29 @@ class AESCipher:
     """
     def __init__(self, data, key):
         self.data   = data
-        self.key    = sha256(key.encode()).digest()[:32]
+        self.key    = sha256(key).digest()[:32]
         self.pad    = lambda s: s + (16 - len(s) % 16) * chr(16 - len(s) % 16)
         self.unpad  = lambda s: s[:-ord(s[len(s) - 1:])]
 
     def encrypt(self):
         plain_text  = self.pad(self.data)
         iv          = Random().read(AES.block_size)
-        cipher      = AES.new(self.key, AES.MODE_OFB, iv)
+        cipher      = AES.new(self.key, AES.MODE_GCM, iv)
         return b64encode(iv + cipher.encrypt(plain_text.encode())).decode()
 
     def decrypt(self):
         cipher_text = b64decode(self.data.encode())
         iv          = cipher_text[:16]
-        cipher      = AES.new(self.key,AES.MODE_OFB,iv)
+        cipher      = AES.new(self.key,AES.MODE_GCM,iv)
         return self.unpad(cipher.decrypt(cipher_text[16:])).decode()
 
 
-def encrypt_CSV(file_name, keys, columns_to_encrypt = None):
+def encrypt_CSV(file_name, key, columns_to_encrypt = None):
     """
-    encrypts specified columns of CSV file with corresponding keys using AES-256 in OFB mode
+    encrypts specified columns of CSV file with corresponding keys using AES-256 in GCM mode
     parameters:
         file_name:          name of CSV file to encrypt
-        keys:               list of keys (strings)
+        key:                16-byte secret key
         columns_to_encrypt: unspecified ('None'), or array with indices of columns to encrypt
     """
     file = open(file_name, 'r')
@@ -45,8 +45,6 @@ def encrypt_CSV(file_name, keys, columns_to_encrypt = None):
         columns_to_encrypt = [_ for _ in range(columns)]
     del reader_
 
-    if len(keys) != len(columns_to_encrypt):
-        raise ValueError("number of keys ({}) and columns to encrypt ({}) do not match".format(len(keys), len(columns_to_encrypt)))
     if len(list(set(columns_to_encrypt))) < len(columns_to_encrypt):
         raise ValueError("repeated column number")
     elif len(columns_to_encrypt) != len(set(columns_to_encrypt).intersection(set(range(columns)))):
@@ -54,7 +52,7 @@ def encrypt_CSV(file_name, keys, columns_to_encrypt = None):
 
     column_keys = {}
     for i in range(len(columns_to_encrypt)):
-        column_keys[columns_to_encrypt[i]] = keys[i]
+        column_keys[columns_to_encrypt[i]] = Random().read(16)
     header = next(reader) 
     encrypted_data = []
     for line in reader:
@@ -72,42 +70,41 @@ def encrypt_CSV(file_name, keys, columns_to_encrypt = None):
         writer.writeheader()
         for row in encrypted_data:
             writer.writerow(row)
-    
+            
+    encr_keys = {}
+    for column in columns_to_encrypt:
+        iv = Random().read(16)
+        cipher = AES.new(key, AES.MODE_GCM, iv)
+        encr_keys[column] = b64encode(iv + cipher.encrypt(column_keys[column])).decode()
+    return encr_keys
 
-def decrypt_CSV(file_name, keys, columns_to_decrypt = None):
+
+def decrypt_CSV(file_name, key, encr_keys):
     """
     decrypts CSV file encrypted with encrypt_CSV
     parameters:
-        file_name:          name of CSV file to decrypt
-        keys:               array of strings, each a key for the corresponding entry in columns_to_decrypt
-                            (i.e. keys[0] corresponds to columns_to_encrypt[0], and so on)
-        columns_to_decrypt: unspecified ('None'), or array with indices of columns to decrypt
+        file_name: name of CSV file to decrypt
+        key:       16-byte secret key
+        encr_keys: dictionary of column numbers and their corresponding (encrypted) keys
     """
     file = open(file_name, 'r')
     reader_, reader = itertools.tee(csv.reader(file))
     columns = len(next(reader_))
-    if not columns_to_decrypt:
-        columns_to_decrypt = [_ for _ in range(columns)]
     del reader_
-
-    if len(keys) != len(columns_to_decrypt):
-        raise ValueError("number of keys ({}) and columns to encrypt ({}) do not match".format(len(keys), len(columns_to_decrypt)))
-    if len(list(set(columns_to_decrypt))) < len(columns_to_decrypt):
-        raise ValueError("repeated column number")
-    elif len(columns_to_decrypt) != len(set(columns_to_decrypt).intersection(set(range(columns)))):
-        raise ValueError("index does not correspond to column")
         
     column_keys = {}
-    for i in range(len(columns_to_decrypt)):
-        if columns_to_decrypt[i] in range(columns):
-            column_keys[columns_to_decrypt[i]] = keys[i]
+    for column in encr_keys:
+        encr_key = b64decode(encr_keys[column].encode())
+        cipher   = AES.new(key, AES.MODE_GCM, encr_key[:16])
+        column_keys[column] = cipher.decrypt(encr_key[16:])
+        
     header = next(reader) 
     decrypted_data = []
     for line in reader:
         if line:
             decrypted_row = {}
             for i in range(len(line)):
-                if i in columns_to_decrypt:
+                if i in column_keys:
                     decrypted_row[header[i]] = AESCipher(line[i], column_keys[i]).decrypt()
                 else:
                     decrypted_row[header[i]] = line[i]
