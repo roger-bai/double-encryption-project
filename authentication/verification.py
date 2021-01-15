@@ -3,7 +3,6 @@ Credit to:
 https://stackoverflow.com/questions/50608010/how-to-verify-a-signed-file-in-python
 """
 
-
 import base64
 import cryptography.exceptions
 from cryptography.hazmat.backends import default_backend
@@ -11,15 +10,15 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.serialization import load_pem_public_key
 
-def verify_sig(pubkey, payload, signature):
+def verify_sig(PUBLIC_KEY_LOCATION, PAYLOAD_LOCATION, SIGNATURE_LOCATION):
     # Load the public key.
-    with open(pubkey, 'rb') as f:
+    with open(PUBLIC_KEY_LOCATION, 'rb') as f:
         public_key = load_pem_public_key(f.read(), default_backend())
 
     # Load the payload contents and the signature.
-    with open(payload, 'rb') as f:
+    with open(PAYLOAD_LOCATION, 'rb') as f:
         payload_contents = f.read()
-    with open(signature, 'rb') as f:
+    with open(SIGNATURE_LOCATION, 'rb') as f:
         signature = base64.b64decode(f.read())
 
     # Perform the verification.
