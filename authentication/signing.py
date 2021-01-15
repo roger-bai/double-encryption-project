@@ -9,16 +9,16 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 
-def sign_file(privkey, file_to_sign):
+def sign_file(PRIVATE_KEY_LOCATION, FILE_TO_BE_SIGNED):
     # Load the private key.
-    with open(privkey, 'rb') as key_file:
+    with open(PRIVATE_KEY_LOCATION, 'rb') as key_file:
         private_key = serialization.load_pem_private_key(
             key_file.read(),
             password = None,
             backend = default_backend(),
         )
     # Load the contents of the file to be signed.
-    with open('./test files/' + file_to_sign, 'rb') as f:
+    with open(FILE_TO_BE_SIGNED, 'rb') as f:
         payload = f.read()
     # Sign the payload file.
     signature = base64.b64encode(
@@ -31,5 +31,5 @@ def sign_file(privkey, file_to_sign):
             hashes.SHA256(),
         )
     )
-    with open('./uploads/' + file_to_sign + '.sig', 'wb') as f:
+    with open(SIGNATURE_LOCATION, 'wb') as f:
         f.write(signature)
