@@ -2,7 +2,6 @@
 https://stackoverflow.com/questions/50608010/how-to-verify-a-signed-file-in-python
 """
 
-
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -15,7 +14,7 @@ def gen_pub_pri_keys():
         backend = default_backend(),
     )
     # Save the private key to a file.
-    with open('./uploads/private.key', 'wb') as f:
+    with open($PRIVATE_KEY_LOCATION$, 'wb') as f:
         f.write(
             private_key.private_bytes(
                 encoding=serialization.Encoding.PEM,
@@ -24,7 +23,7 @@ def gen_pub_pri_keys():
             )
         )
     # Save the public key to a file.
-    with open('./uploads/public.pem', 'wb') as f:
+    with open($PUBLIC_KEY_LOCATION$, 'wb') as f:
         f.write(
             private_key.public_key().public_bytes(
                 encoding = serialization.Encoding.PEM,
