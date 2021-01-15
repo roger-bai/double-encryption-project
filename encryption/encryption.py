@@ -30,35 +30,23 @@ class AESCipher:
         return self.unpad(cipher.decrypt(cipher_text[16:])).decode()
 
 
-def encrypt_CSV(file_name, columns_to_encrypt = None):
+def encrypt_CSV(file_name, column_keys):
     """
     encrypts specified columns of CSV file with corresponding keys using AES-256 in GCM mode
     parameters:
-        file_name:          name of CSV file to encrypt
-        columns_to_encrypt: unspecified ('None'), or array with indices of columns to encrypt
+        file_name:   name of CSV file to encrypt
+        column_keys: dict with entries {column index : 16-byte secret key}
     """
     file = open(file_name, 'r')
-    reader_, reader = itertools.tee(csv.reader(file, delimiter=','))
-    columns = len(next(reader_))
-    if not columns_to_encrypt:
-        columns_to_encrypt = [_ for _ in range(columns)]
-    del reader_
-
-    if len(list(set(columns_to_encrypt))) < len(columns_to_encrypt):
-        raise ValueError("repeated column number")
-    elif len(columns_to_encrypt) != len(set(columns_to_encrypt).intersection(set(range(columns)))):
-        raise ValueError("index does not correspond to column")
-
-    column_keys = {}
-    for i in range(len(columns_to_encrypt)):
-        column_keys[columns_to_encrypt[i]] = Random().read(16)
+    reader = csv.reader(file, delimiter=',')
+    
     header = next(reader) 
     encrypted_data = []
     for line in reader:
         if line:
             encrypted_row = {}
             for i in range(len(line)):
-                if i in columns_to_encrypt:
+                if i in column_keys:
                     encrypted_row[header[i]] = AESCipher(line[i], column_keys[i]).encrypt()
                 else:
                     encrypted_row[header[i]] = line[i]
@@ -69,7 +57,6 @@ def encrypt_CSV(file_name, columns_to_encrypt = None):
         writer.writeheader()
         for row in encrypted_data:
             writer.writerow(row)  
-    return column_keys
 
 
 def decrypt_CSV(file_name, column_keys):
@@ -77,13 +64,10 @@ def decrypt_CSV(file_name, column_keys):
     decrypts CSV file encrypted with encrypt_CSV
     parameters:
         file_name:   name of CSV file to decrypt
-        key:         16-byte secret key
-        column_keys: dictionary of column numbers and their corresponding keys
+        column_keys: dict with entries {column index : 16-byte secret key}
     """
     file = open(file_name, 'r')
-    reader_, reader = itertools.tee(csv.reader(file))
-    columns = len(next(reader_))
-    del reader_
+    reader = csv.reader(file, delimiter=',')
         
     header = next(reader) 
     decrypted_data = []
