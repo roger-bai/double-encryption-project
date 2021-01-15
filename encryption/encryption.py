@@ -30,6 +30,19 @@ class AESCipher:
         return self.unpad(cipher.decrypt(cipher_text[16:])).decode()
 
 
+def generate_DEKs(columns_to_encrypt):
+    """
+    columns_to_encrypt: array with indices of columns to encrypt
+    returns dict of the form {column : random 16-byte key}
+    """
+    if len(list(set(columns_to_encrypt))) < len(columns_to_encrypt):
+        raise ValueError("repeated column number")
+    column_keys = {}
+    for i in range(len(columns_to_encrypt)):
+        column_keys[columns_to_encrypt[i]] = Random().read(16)
+    return column_keys
+
+        
 def encrypt_CSV(file_name, column_keys):
     """
     encrypts specified columns of CSV file with corresponding keys using AES-256 in GCM mode
@@ -38,7 +51,11 @@ def encrypt_CSV(file_name, column_keys):
         column_keys: dict with entries {column index : 16-byte secret key}
     """
     file = open(file_name, 'r')
-    reader = csv.reader(file, delimiter=',')
+    reader_, reader = itertools.tee(csv.reader(file, delimiter=','))
+    columns = len(next(reader_))
+    if len(list(column_keys.keys())) != len(set(column_keys.keys()).intersection(set(range(columns)))):
+        raise ValueError("index does not correspond to column")
+    del reader_
     
     header = next(reader) 
     encrypted_data = []
