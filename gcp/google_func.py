@@ -12,7 +12,7 @@ bucketFolder = BUCKET_FOLDER
 localFolder = LOCAL_FOLDER
 
 # Authentication to bucket
-storage_client = storage.Client.from_service_account_json('service_account.json')
+storage_client = storage.Client.from_service_account_json(JSON_OF_SERVICE_ACCOUNT)
 bucket = storage_client.get_bucket(bucketName)
 
 def upload_files(bucketName):
