@@ -1,6 +1,4 @@
-"""
-Script for cloud VM to decrypt a csv file.
-"""
+# Script for cloud VM to decrypt a .csv file.
 
 import encryption
 import os
