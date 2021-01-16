@@ -8,6 +8,10 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 
 # Generate the public/private key pair.
 def gen_pub_pri_keys():
+    """
+    Generates a public and private key pair and saves the private key 
+    to PRIVATE_KEY_LOCATION and the public key to PUBLIC_KEY_LOCATION
+    """
     private_key = rsa.generate_private_key(
         public_exponent = 65537,
         key_size = 4096,
