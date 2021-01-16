@@ -1,4 +1,4 @@
-# Script to upload DEKs to cloud VM to decrypt a file
+# Script to upload DEKs to cloud VM to decrypt a .csv file
 
 import vault
 import google_func
