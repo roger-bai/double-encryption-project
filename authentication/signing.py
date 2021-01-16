@@ -10,6 +10,9 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 
 def sign_file(PRIVATE_KEY_LOCATION, FILE_TO_BE_SIGNED):
+    """
+    Signs FILE_TO_BE_SIGNED with PRIVATE_KEY_LOCATION and creates a signature at SIGNATURE_LOCATION
+    """
     # Load the private key.
     with open(PRIVATE_KEY_LOCATION, 'rb') as key_file:
         private_key = serialization.load_pem_private_key(
