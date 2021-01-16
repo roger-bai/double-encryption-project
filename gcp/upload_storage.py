@@ -1,3 +1,5 @@
+# Script to encrypt and upload a file to Google Cloud Storage
+
 import ocsp
 import vault
 import google_func
