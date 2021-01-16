@@ -1,4 +1,4 @@
-# Script to download a file and the associated to DEKs, and then decrypts the file
+# Script to download a .csv and the associated DEKs, and then decrypts the file
 
 import encryption
 import vault
