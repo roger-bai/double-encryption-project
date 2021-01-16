@@ -1,4 +1,4 @@
-# Script to encrypt and upload a file to Google Cloud Storage
+# Script to encrypt and upload a .csv to Google Cloud Storage
 
 import ocsp
 import vault
