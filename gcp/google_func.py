@@ -1,4 +1,5 @@
-"""Credit to
+"""
+Credit to
 https://hackersandslackers.com/manage-files-in-google-cloud-storage-with-python/
 """
 
@@ -15,7 +16,8 @@ storage_client = storage.Client.from_service_account_json('service_account.json'
 bucket = storage_client.get_bucket(bucketName)
 
 def upload_files(bucketName):
-    """Uploads files in LOCAL_FOLDER to BUCKET_NAME/BUCKET_FOLDER
+    """
+    Uploads files in LOCAL_FOLDER to BUCKET_NAME/BUCKET_FOLDER
     """
     files = [f for f in listdir(localFolder) if isfile(join(localFolder, f))]
     for file in files:
@@ -25,14 +27,16 @@ def upload_files(bucketName):
     return f'Uploaded {files} to "{bucketName}" bucket.'
 
 def list_files(bucketName):
-    """Lists the files in BUCKET_NAME/BUCKET_FOLDER
+    """
+    Lists the files in BUCKET_NAME/BUCKET_FOLDER
     """
     files = bucket.list_blobs(prefix=bucketFolder)
     fileList = [file.name for file in files if '.' in file.name]
     return fileList
 
 def download_file(bucketFile, localFolder):
-    """Downloads the files in BUCKET_NAME/BUCKET_FOLDER to LOCAL_FOLDER
+    """
+    Downloads the files in BUCKET_NAME/BUCKET_FOLDER to LOCAL_FOLDER
     """
     blob = bucket.blob(bucketFile)
     fileName = blob.name.split('/')[-1]
