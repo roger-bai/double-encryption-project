@@ -11,6 +11,10 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.serialization import load_pem_public_key
 
 def verify_sig(PUBLIC_KEY_LOCATION, PAYLOAD_LOCATION, SIGNATURE_LOCATION):
+    """
+    Verifies that SIGNATURE_LOCATION is a signature of PAYLOAD_LOCATION using
+    PUBLIC_KEY_LOCATION
+    """
     # Load the public key.
     with open(PUBLIC_KEY_LOCATION, 'rb') as f:
         public_key = load_pem_public_key(f.read(), default_backend())
