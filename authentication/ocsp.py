@@ -1,9 +1,5 @@
 import sys
 import subprocess
-
-# better ocsp package
-subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'ocsp-checker'])
-
 from ocspchecker import ocspchecker
 
 def ocsp_check(hostname: str, port=443) -> str:
