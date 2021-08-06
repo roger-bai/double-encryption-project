@@ -1,4 +1,3 @@
-pip install ed25519
 import ed25519
 
 # Create the public and private keys.
